@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Planets,People
 #from models import Person
 
 app = Flask(__name__)
@@ -19,6 +19,30 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+
+@app.route("/people",methods=['GET'])
+def all_people():
+    people = People.query.all()
+    return jsonify(people.serialize())
+
+@app.route("/people",methods=['POST'])
+def create_people ():
+    people = People.serialize()
+    body = request.get_json()
+    return "created"
+
+# @app.route("/people/<int:people_id>", methods=['GET'])
+# def one_people(people_id):
+# return jsonify(people[people_id])
+
+# @app.route("/planets",methods=['GET'])
+# def all_planets():
+# return jsonify(planets)
+
+# @app.route("/planets/<int:planet_id>", methods=['GET'])
+# def one_planet(planet_id):
+# return jsonify(planets[planet_id])
+
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
