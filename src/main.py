@@ -24,13 +24,16 @@ setup_admin(app)
 @app.route("/people",methods=['GET'])
 def all_people():
     people = People.query.all()
-    return jsonify(people.serialize())
+    people_dic = []
+    for person in people :
+        people_dic.append(person.serialize())
+    return jsonify(people_dic)
 
-@app.route("/people",methods=['POST'])
-def create_people ():
-    people = People.serialize()
-    body = request.get_json()
-    return "created"
+# @app.route("/people",methods=['POST'])
+# def create_people ():
+#     people = People.serialize()
+#     body = request.get_json()
+#     return "created"
 
 # @app.route("/people/<int:people_id>", methods=['GET'])
 # def one_people(people_id):
