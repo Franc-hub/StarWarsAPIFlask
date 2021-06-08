@@ -23,21 +23,25 @@ setup_admin(app)
 
 @app.route("/people",methods=['GET'])
 def all_people():
-    people = People.query.all()
+    people = People.get_all()
     people_dic = []
     for person in people :
         people_dic.append(person.serialize())
     return jsonify(people_dic)
 
-# @app.route("/people",methods=['POST'])
-# def create_people ():
-#     people = People.serialize()
-#     body = request.get_json()
-#     return "created"
+@app.route("/people",methods=['POST'])
+def create_people ():
+    json = request.get_json()
+    people = People()
+    people.set_with_json(json)
+    people.db_post()
+    return jsonify(people.serialize())
 
-# @app.route("/people/<int:people_id>", methods=['GET'])
-# def one_people(people_id):
-# return jsonify(people[people_id])
+@app.route("/people/<int:people_id>", methods=['GET'])
+def one_people(people_id):
+    people = People.get_one(people_id)
+    people_serialized = people.serialized()
+    return jsonify(people_serialized)
 
 # @app.route("/planets",methods=['GET'])
 # def all_planets():
@@ -66,6 +70,12 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+
+
+# @app.route('/login',methods=['POST'])
+# def handel_login():
+#     json = reques.
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

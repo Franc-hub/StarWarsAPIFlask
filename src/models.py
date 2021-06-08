@@ -5,6 +5,17 @@ from sqlalchemy import Integer, String, Text, Boolean, Column
 
 db = SQLAlchemy()
 
+class BaseModel():
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()
+        
+
+    @classmethod
+    def get_one(cls,id):
+        return cls.query.get(id)
+        
+
 class User(db.Model):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -53,7 +64,9 @@ class Planets(db.Model):
         }
 
 
-class People(db.Model):
+
+
+class People(BaseModel,db.Model):
     __tablename__ = 'people'
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
@@ -74,9 +87,20 @@ class People(db.Model):
             "gender":self.gender,
             "height":self.height,
             "description":self.description
-            
             # do not serialize the password, its a security breach
         }
+    
+    def db_post(self):        
+        db.session.add(self)
+        db.session.commit()
+    
+    def set_with_json(self,json):
+        self.name = json["name"]
+        self.eye_color = json["eye_color"]
+        self.skin_color = json["skin_color"]
+        self.gender = json["gender"]
+        self.height = json["height"]
+        self.description = json["description"]
 
 
 class Todo(db.Model):
