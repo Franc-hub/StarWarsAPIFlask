@@ -21,6 +21,7 @@ db.init_app(app)
 CORS(app)
 setup_admin(app)
 
+
 @app.route("/people",methods=['GET'])
 def all_people():
     people = People.get_all()
@@ -39,9 +40,33 @@ def create_people ():
 
 @app.route("/people/<int:people_id>", methods=['GET'])
 def one_people(people_id):
-    people = People.get_one(people_id)
+    people = People.get_one_by_id(people_id)
     people_serialized = people.serialized()
     return jsonify(people_serialized)
+
+
+@app.route("/planets", methods=["GET"])
+
+def all_planets():
+    planets = Planets.get_all()
+    planets_dic = []
+    for planet in planets :
+        planets_dic.append(planet.serialize())
+    return jsonify(planets_dic)
+
+@app.route("/planets",methods=['POST'])
+def create_planet():
+    json = request.get_json()
+    planets = Planets()
+    planets.set_with_json(json)
+    planets.db_post()
+    return jsonify(planets.serialize())
+
+@app.route("/people/<int:people_id>", methods=['GET'])
+def one_people(people_id):
+    people = People.get_one_by_id(people_id)
+    people_serialized = people.serialized()
+    return jsonify(people_serialized) 
 
 # @app.route("/planets",methods=['GET'])
 # def all_planets():

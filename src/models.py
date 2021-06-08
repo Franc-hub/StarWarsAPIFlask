@@ -12,11 +12,16 @@ class BaseModel():
         
 
     @classmethod
-    def get_one(cls,id):
-        return cls.query.get(id)
+    def get_one_by_id(cls,model_id):
+        return cls.query.filter_by(id = model_id).first()
+
+
+    @classmethod 
+    def delete_all(cls):
+        return cls.query.delete()
         
 
-class User(db.Model):
+class User(db.Model,BaseModel):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     name =Column(String(250))
@@ -39,7 +44,7 @@ class User(db.Model):
         }
 
 
-class Planets(db.Model):
+class Planets(db.Model,BaseModel):
     __tablename__ = 'planets'
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
@@ -54,15 +59,32 @@ class Planets(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
             "name" : self.name,
             "population": self.population,
             "orbital_period" :self.orbital_period,
-            "rotation_period" : self.rotation,
-            "diameter": self.diammeter 
+            "rotation_period" : self.rotation_period,
+            "diameter": self.diameter 
             # do not serialize the password, its a security breach
         }
+        
+    def db_post(self):        
+        db.session.add(self)
+        db.session.commit()
 
+    def set_with_json(self,json):
+        self.name = json["name"]
+        self.population = json["population"]
+        self.orbital_period = json["orbital_period"]
+        self.rotation_period = json["rotation_period"]
+        self.diameter = json["diameter"]
+
+    def db_delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+        
+
+    
 
 
 
