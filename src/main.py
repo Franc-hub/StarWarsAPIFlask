@@ -44,6 +44,18 @@ def one_people(people_id):
     people_serialized = people.serialized()
     return jsonify(people_serialized)
 
+@app.route("/people/<int:people_id>", methods=['DELETE'])
+def delte_one_people(people_id):
+    people = People.query.get(people_id)
+    db.session.delete(people)
+    db.session.commit()
+    return jsonify(people.serialize(), "msg: User is deleted") 
+
+@app.route("/people" , methods=["DELETE"])
+def delete_all_person():
+    people = People.get_all()
+    print(people)
+
 
 @app.route("/planets", methods=["GET"])
 
@@ -62,19 +74,13 @@ def create_planet():
     planets.db_post()
     return jsonify(planets.serialize())
 
-@app.route("/people/<int:people_id>", methods=['GET'])
-def one_people(people_id):
-    people = People.get_one_by_id(people_id)
-    people_serialized = people.serialized()
-    return jsonify(people_serialized) 
+@app.route("/planet/<int:planet_id>", methods=['GET'])
+def one_planet(planet_id):
+    planet = People.get_one_by_id(planet_id)
+    planet_serialized = planet.serialize()
+    return jsonify(planet_serialized) 
 
-# @app.route("/planets",methods=['GET'])
-# def all_planets():
-# return jsonify(planets)
 
-# @app.route("/planets/<int:planet_id>", methods=['GET'])
-# def one_planet(planet_id):
-# return jsonify(planets[planet_id])
 
 
 # Handle/serialize errors like a JSON object
@@ -98,9 +104,7 @@ def handle_hello():
 
 
 
-# @app.route('/login',methods=['POST'])
-# def handel_login():
-#     json = reques.
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
