@@ -89,16 +89,16 @@ def handle_login():
     if json is None: 
         raise APIException("You shoulld be return a json")
 
-    if email is not json:
+    if "email" not in json:
         raise APIException("That's not an email in json")
 
-    if password is not json:
+    if "password" not in json:
         raise APIException("That's not a password in json")
 
     json["email"]
     json["password"]
 
-    user=User.login_credentials(email,password)
+    user = User.login_credentials(email,password)
 
     if user is None:
          raise APIException("User not found")

@@ -32,7 +32,7 @@ class User(db.Model,BaseModel):
 
 
     @staticmethod
-    def login_credentials():
+    def login_credentials(email,password):
         return User.query.filter_by(email=email).filter_by(password=password).first()
 
     def __repr__(self):
