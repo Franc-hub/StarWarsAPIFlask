@@ -29,14 +29,18 @@ class User(db.Model,BaseModel):
     email=Column(String(250), nullable=False)
     password=Column(String(250), nullable=False)
     is_logged=Column(Boolean, default=False, nullable=False)
+    token = Column(String(250), nullable=False)
+    favorite_planets = db.relationship('Favorite_Planet', backref='user', lazy=True)
 
 
     @staticmethod
     def login_credentials(email,password):
         return User.query.filter_by(email=email).filter_by(password=password).first()
 
+    
+
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.name
 
     def serialize(self):
         return {
@@ -44,7 +48,8 @@ class User(db.Model,BaseModel):
             "name": self.name,
             "last_name": self.last_name,
             "email": self.email,
-            "is_logged": self.is_logged
+            "is_logged": self.is_logged,
+            "favorite_planets": list(map(lambda x: x.serialize(), self.favorite_planets))
             # do not serialize the password, its a security breach
         }
 
@@ -57,6 +62,8 @@ class Planets(db.Model,BaseModel):
     orbital_period=Column(Integer,primary_key=False)
     rotation_period=Column(Integer,primary_key=False)
     diameter =Column(Integer,primary_key=False)
+    favorite_planets = db.relationship('Favorite_Planet', backref='planets', lazy=True)
+    
 
     def __repr__(self):
         return '<Planets %r>' % self.name
@@ -71,6 +78,9 @@ class Planets(db.Model,BaseModel):
             "diameter": self.diameter 
             # do not serialize the password, its a security breach
         }
+
+    
+
         
     def db_post(self):        
         db.session.add(self)
@@ -129,6 +139,24 @@ class People(BaseModel,db.Model):
         self.height = json["height"]
         self.description = json["description"]
 
+
+
+class Favorite_Planet(BaseModel,db.Model):
+    __tablename__ = 'favorite_planet'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, db.ForeignKey('user.id'))
+    planet_id = Column(Integer, db.ForeignKey('planets.id'))
+    
+
+    def __repr__(self):
+        return '<Favorite_Planets %r>' % self.id
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "planet_id":self.planet_id,
+            }
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -22,6 +22,14 @@ CORS(app)
 setup_admin(app)
 
 
+@app.route("/users",methods=['GET'])
+def all_users():
+    people = User.get_all()
+    people_dic = []
+    for person in people :
+        people_dic.append(person.serialize())
+    return jsonify(people_dic),200
+
 @app.route("/people",methods=['GET'])
 def all_people():
     people = People.get_all()
@@ -94,11 +102,11 @@ def handle_login():
 
     if "password" not in json:
         raise APIException("That's not a password in json")
+    
+    print(json["email"],json["password"])
+   
 
-    json["email"]
-    json["password"]
-
-    user = User.login_credentials(email,password)
+    user = User.login_credentials(json["email"],json["password"])
 
     if user is None:
          raise APIException("User not found")
