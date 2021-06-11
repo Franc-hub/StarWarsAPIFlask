@@ -30,6 +30,11 @@ class User(db.Model,BaseModel):
     password=Column(String(250), nullable=False)
     is_logged=Column(Boolean, default=False, nullable=False)
 
+
+    @staticmethod
+    def login_credentials():
+        return User.query.filter_by(email=email).filter_by(password=password).first()
+
     def __repr__(self):
         return '<User %r>' % self.username
 

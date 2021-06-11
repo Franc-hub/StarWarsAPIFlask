@@ -81,6 +81,29 @@ def one_planet(planet_id):
     return jsonify(planet_serialized) 
 
 
+@app.route("/login", methods=['POST'])
+def handle_login():
+
+    json=request.get_json()
+
+    if json is None: 
+        raise APIException("You shoulld be return a json")
+
+    if email is not json:
+        raise APIException("That's not an email in json")
+
+    if password is not json:
+        raise APIException("That's not a password in json")
+
+    json["email"]
+    json["password"]
+
+    user=User.login_credentials(email,password)
+
+    if user is None:
+         raise APIException("User not found")
+
+    return jsonify(user.serialize()), 200
 
 
 # Handle/serialize errors like a JSON object
