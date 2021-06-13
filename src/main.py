@@ -114,9 +114,22 @@ def handle_login():
 
     token ="wjrpwefponwef453464dlmgñdmfñgdmfhdlhmñdh"
 
-    user.have_token(token)
+    user.assign_token(token)
 
-    return jsonify(user.serialize()), 201
+    return jsonify({"token":token}), 201
+
+
+@app.route("/profile", methods=['POST'])
+def handle_profile():
+    json = request.get_json()
+    user = User.user_have_token(json["token"])
+    if user is None :
+        raise APIExeption("You don't have a token")
+
+    return jsonify(user.serialize()),200
+
+
+    
 
 
 # Handle/serialize errors like a JSON object

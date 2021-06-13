@@ -36,9 +36,12 @@ class User(db.Model,BaseModel):
     @staticmethod
     def login_credentials(email,password):
         return User.query.filter_by(email=email).filter_by(password=password).first()
-
     
-    def have_token(self,token):
+    
+    def user_have_token(self,token):
+        return User.query.filter_by(token=self.token).first()
+   
+    def assign_token(self,token):
         self.token = token
         db.session.add(self)
         db.session.commit()
@@ -49,7 +52,6 @@ class User(db.Model,BaseModel):
     def serialize(self):
         return {
             "id": self.id,
-            "token":self.token,
             "name": self.name,
             "last_name": self.last_name,
             "email": self.email,
