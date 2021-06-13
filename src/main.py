@@ -111,7 +111,12 @@ def handle_login():
     if user is None:
          raise APIException("User not found")
 
-    return jsonify(user.serialize()), 200
+
+    token ="wjrpwefponwef453464dlmgñdmfñgdmfhdlhmñdh"
+
+    user.have_token(token)
+
+    return jsonify(user.serialize()), 201
 
 
 # Handle/serialize errors like a JSON object

@@ -29,7 +29,7 @@ class User(db.Model,BaseModel):
     email=Column(String(250), nullable=False)
     password=Column(String(250), nullable=False)
     is_logged=Column(Boolean, default=False, nullable=False)
-    token = Column(String(250), nullable=False)
+    token = Column(String(250), nullable=True)
     favorite_planets = db.relationship('Favorite_Planet', backref='user', lazy=True)
 
 
@@ -38,6 +38,10 @@ class User(db.Model,BaseModel):
         return User.query.filter_by(email=email).filter_by(password=password).first()
 
     
+    def have_token(self,token):
+        self.token = token
+        db.session.add(self)
+        db.session.commit()
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -45,6 +49,7 @@ class User(db.Model,BaseModel):
     def serialize(self):
         return {
             "id": self.id,
+            "token":self.token,
             "name": self.name,
             "last_name": self.last_name,
             "email": self.email,
