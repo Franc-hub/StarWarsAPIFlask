@@ -11,15 +11,22 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, Planets,People
 #from models import Person
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+jwt = JWTManager(app)
+
 
 
 @app.route("/users",methods=['GET'])
@@ -105,18 +112,23 @@ def handle_login():
     
     print(json["email"],json["password"])
    
+    email = json["email"]
+    password = json["password"]
 
-    user = User.login_credentials(json["email"],json["password"])
+    user = User.query.filter_by(email=email).one_or_none()
 
     if user is None:
          raise APIException("User not found")
 
+    if not user.check_password(password):
+      return jsonify("Your credentials are wrong, please try again"), 401
 
-    token ="wjrpwefponwef453464dlmgñdmfñgdmfhdlhmñdh"
+    access_token = create_access_token(identity=user.serialize())
+    return jsonify(accessToken=access_token)
 
-    user.assign_token(token)
 
-    return jsonify({"token":token}), 201
+
+
 
 
 @app.route("/profile", methods=['POST'])

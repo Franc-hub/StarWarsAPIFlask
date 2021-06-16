@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Text, Boolean, Column
+from werkzeug.security import safe_str_cmp
 # from sqlalchemy.orm import deferred
 
 
@@ -45,7 +46,10 @@ class User(db.Model,BaseModel):
         self.token = token
         db.session.add(self)
         db.session.commit()
-
+    
+    def check_password(self, password_param):
+        return safe_str_cmp(self.password.encode('utf-8'), password_param.encode('utf-8'))
+    
     def __repr__(self):
         return '<User %r>' % self.name
 
