@@ -16,6 +16,10 @@ class BaseModel():
     def get_one_by_id(cls,model_id):
         return cls.query.filter_by(id = model_id).first()
 
+    @classmethod
+    def get_one_by_id(cls,model_id):
+        return cls.query.filter_by(id = model_id).first()
+
 
     @classmethod 
     def delete_all(cls):
@@ -49,6 +53,8 @@ class User(db.Model,BaseModel):
     
     def check_password(self, password_param):
         return safe_str_cmp(self.password.encode('utf-8'), password_param.encode('utf-8'))
+
+
     
     def __repr__(self):
         return '<User %r>' % self.name
@@ -141,7 +147,15 @@ class People(BaseModel,db.Model):
     def db_post(self):        
         db.session.add(self)
         db.session.commit()
-    
+
+
+    def put_with_json(self,json):
+        if json["name"]:
+            self.name = json["name"]
+        if json["eye_color"]:
+            self.eye_color = json["eye_color"]
+     
+
     def set_with_json(self,json):
         self.name = json["name"]
         self.eye_color = json["eye_color"]

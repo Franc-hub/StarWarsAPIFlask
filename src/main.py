@@ -53,6 +53,16 @@ def create_people ():
     people.db_post()
     return jsonify(people.serialize())
 
+@app.route("/people/<int:people_id>",methods=['PUT'])
+def update_people (people_id):
+    json = request.get_json()
+    people = People.get_one_by_id(people_id)
+    print(people)
+    people.put_with_json(json)
+    print(people)
+    db.session.commit()
+    return jsonify(people.serialize())
+
 @app.route("/people/<int:people_id>", methods=['GET'])
 def one_people(people_id):
     people = People.get_one_by_id(people_id)
