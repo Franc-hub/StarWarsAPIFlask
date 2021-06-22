@@ -141,14 +141,6 @@ def handle_login():
 
 
 
-# @app.route("/profile", methods=['POST'])
-# def handle_profile():
-#     json = request.get_json()
-#     user = User.user_have_token(json["token"])
-#     if user is None :
-#         raise APIExeption("You don't have a token")
-
-#     return jsonify(user.serialize()),200
 
 @app.route("/protected", methods=["GET"])
 @jwt_required()
